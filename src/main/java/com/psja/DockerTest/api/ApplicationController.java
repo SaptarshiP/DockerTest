@@ -11,6 +11,7 @@ public class ApplicationController {
 
 	@RequestMapping(value = "/getData")
 	public ResponseEntity<String> getData(){
+		System.out.println("Hii i am here");
 		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.TEXT_PLAIN).body( "HII PSJA" );
 	}
 	
