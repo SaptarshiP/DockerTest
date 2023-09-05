@@ -6,12 +6,17 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @RestController
 public class ApplicationController {
 
+	private static Logger logger = LoggerFactory.getLogger(ApplicationController.class);
+	
 	@RequestMapping(value = "/getData")
 	public ResponseEntity<String> getData(){
-		System.out.println("Hii i am here");
+		logger.info( "Hi i am inside method" );
 		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.TEXT_PLAIN).body( "HII PSJA" );
 	}
 	
