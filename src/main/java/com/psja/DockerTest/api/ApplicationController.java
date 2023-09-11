@@ -16,7 +16,7 @@ public class ApplicationController {
 	
 	@RequestMapping(value = "/getData")
 	public ResponseEntity<String> getData(){
-		logger.info( "Hi i am inside method4" );
+		logger.info( "Hi i am inside method5" );
 		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.TEXT_PLAIN).body( "HII PSJA TEST" );
 	}
 	
