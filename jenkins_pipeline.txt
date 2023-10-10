@@ -1,0 +1,66 @@
+pipeline{
+    agent {label 'docker'}
+    stages{
+        stage('git'){
+            steps{
+                git 'https://github.com/SaptarshiP/DockerTest.git'
+            }
+        }
+        stage('maven'){
+            steps{
+                sh 'mvn clean install'
+            }
+        }
+        stage('docker_build'){
+            steps{
+                //sh 'docker rmi testjenkins:latest'
+                //sh 'cd target'
+                //sh 'docker build -t testjenkins ./'
+                script{
+                   def imageName = sh(returnStdout:true, script: 'docker images -q testjenkins:latest').trim()
+                   println imageName
+                   if (imageName != ""){
+                       println "I am here"
+                       sh 'docker rmi testjenkins:latest'
+                       sh 'cd target'
+                       sh 'docker build -t testjenkins ./'
+                   }else{
+                       sh 'cd target'
+                       sh 'docker build -t testjenkins ./'
+                   }
+                }
+                
+            }
+        }
+        stage('docker_push_image'){
+            steps{
+                //sh 'docker rmi saptarship/docker_check:updated'
+                //sh 'docker tag testjenkins:latest saptarship/docker_check:updated'
+                //sh 'docker push saptarship/docker_check:updated'
+                script{
+                    def tagName = sh(returnStdout:true, script: 'docker images -q saptarship/docker_check:updated').trim()
+                    println tagName
+                    if (tagName != ""){
+                        def containerName = sh(returnStdout:true, script: 'docker ps -q -f name=testjenkins')
+                        println containerName
+                        if (containerName!=""){
+                            sh 'docker stop testjenkins'
+                            sh 'docker rm testjenkins'
+                        }
+                        sh 'docker rmi saptarship/docker_check:updated'
+                        sh 'docker tag testjenkins:latest saptarship/docker_check:updated'
+                        sh 'docker push saptarship/docker_check:updated'
+                    }else{
+                        sh 'docker tag testjenkins:latest saptarship/docker_check:updated'
+                        sh 'docker push saptarship/docker_check:updated'
+                    }
+                }
+            }
+        }
+        stage('docker_run'){
+            steps{
+                sh 'docker run -dp 8092:8092 --name testjenkins testjenkins'
+            }
+        }
+    }
+}
